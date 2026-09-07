@@ -15,4 +15,4 @@ A customizable, web-based desktop interface featuring glassmorphic widgets, pers
 
 ## 3. Setup & Usage
 The page is available at:
-![https://opsonusdh.github.io/Glass-look-homepage](https://opsonusdh.github.io/Glass-look-homepage/)
+<https://opsonusdh.github.io/Glass-look-homepage/>
