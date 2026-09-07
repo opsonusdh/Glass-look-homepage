@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Better Than Windows 11</title>
+        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    </head>
+    <body>
+        <video autoplay muted loop playsinline class="bg-video bg">
+            <source src="bgs/video.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+        </video>
+        <img src="bgs/image.png" alt="Background Image" class="bg-image bg">
+        <div id="apps-boxes">
+        <div class="widget apps-box three-d" id="apps-box" data-box-id="box-1">
+            <!-- Some dedault apps -->
+            <span class="apps"><a href="https://www.youtube.com"><img src="https://www.youtube.com/s/desktop/6f290082/img/favicon_144x144.png" alt="YouTube" class="icon"><span>YouTube</span></a></span>
+            <span class="apps"><a href="https://mail.google.com"><img src="https://ssl.gstatic.com/ui/v1/icons/mail/images/favicon_gmail_2026_v2.ico" alt="Gmail" class="icon"><span>Gmail</span></a></span>
+            <span class="apps"><a href="https://meet.google.com"><img src="https://gstatic.com/meet/icons/favicon-2026-v2-96dp.png" alt="meet" class="icon"><span>Meet</span></a></span>
+            <span class="apps"><a href="https://drive.google.com"><img src="https://ssl.gstatic.com/docs/doclist/images/drive_favicon_2026_32dp.png" alt="drive" class="icon"><span>Drive</span></a></span>
+        </div>
+        </div>
+        <div class="widget clock three-d" role="button" tabindex="0" aria-controls="time-modal" aria-expanded="false"><span class="clock-time">00:00:00</span></div>
+        <div class="widget weather three-d" role="button" tabindex="0" aria-controls="weather-modal" aria-expanded="false">
+            <span class="weather-location">Location</span>
+            <span class="weather-condition-logo"></span>
+            <span class="weather-condition">
+                <marquee class="weather-condition-name"></marquee>
+                <span class="temperature">xx°C</span>
+            </span>
+        </div>
+        <div id="weather-modal" class="weather-modal" aria-hidden="true">
+            <div class="weather-modal-backdrop"></div>
+            <section class="weather-panel" role="dialog" aria-modal="true" aria-labelledby="weather-panel-title">
+                <button class="weather-close" type="button" aria-label="Close weather details">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+                <div class="weather-panel-heading">
+                    <div>
+                        <p class="weather-panel-kicker">Current weather</p>
+                        <h2 id="weather-panel-title">Location</h2>
+                        <p class="weather-panel-date"></p>
+                    </div>
+                    <div class="weather-panel-current">
+                        <span class="weather-panel-icon"></span>
+                        <strong class="weather-panel-temperature">--°C</strong>
+                        <span class="weather-panel-condition">Loading...</span>
+                    </div>
+                </div>
+                <!-- maybe this looks better than the orevious -->
+                <div class="weather-metrics">
+                    <div><span>Feels like</span><strong data-weather="feels-like">--°C</strong></div>
+                    <div><span>Humidity</span><strong data-weather="humidity">--%</strong></div>
+                    <div><span>Wind</span><strong data-weather="wind">--</strong></div>
+                    <div><span>Visibility</span><strong data-weather="visibility">--</strong></div>
+                    <div><span>UV index</span><strong data-weather="uv">--</strong></div>
+                    <div><span>Rain chance</span><strong data-weather="rain">--%</strong></div>
+                </div>
+                <div class="weather-sunrise">
+                    <span><i class="bi bi-sunrise"></i> Sunrise <strong data-weather="sunrise">--</strong></span>
+                    <span><i class="bi bi-sunset"></i> Sunset <strong data-weather="sunset">--</strong></span>
+                </div>
+                <div class="forecast-heading"><span>Forecast</span><span>Next 3 days</span></div>
+                <div class="forecast-list"></div>
+            </section>
+        </div>
+        <div id="time-modal" class="weather-modal time-modal" aria-hidden="true">
+            <div class="weather-modal-backdrop"></div>
+            <section class="weather-panel time-panel" role="dialog" aria-modal="true" aria-labelledby="time-panel-title">
+                <button class="weather-close" type="button" aria-label="Close time details">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+                <div class="weather-panel-heading">
+                    <div>
+                        <p class="weather-panel-kicker">Local time</p>
+                        <h2 id="time-panel-title" class="time-panel-date">Sunday, January 1</h2>
+                        <p class="weather-panel-date time-panel-zone">Your local clock</p>
+                    </div>
+                    <div class="weather-panel-current">
+                        <span class="weather-panel-icon"><i class="bi bi-clock-history"></i></span>
+                        <strong class="weather-panel-temperature time-panel-current-time">00:00:00</strong>
+                        <span class="weather-panel-condition">Live time</span>
+                    </div>
+                </div>
+                <div class="time-format-control">
+                    <span>Clock format</span>
+                    <div class="time-format-toggle" role="group" aria-label="Clock format">
+                        <button class="time-format-button is-selected" type="button" data-format="24" aria-pressed="true">24-hour</button>
+                        <button class="time-format-button" type="button" data-format="12" aria-pressed="false">12-hour</button>
+                    </div>
+                </div>
+                <div class="time-tools-grid">
+                    <section class="time-tool-card">
+                        <div class="time-tool-heading"><span>Timer</span><i class="bi bi-stopwatch"></i></div>
+                        <strong class="time-timer-display">00:00:00</strong>
+                        <div class="time-tool-actions">
+                            <button class="timer-start" type="button"><i class="bi bi-play-fill"></i> Start</button>
+                            <button class="timer-reset" type="button"><i class="bi bi-arrow-counterclockwise"></i> Reset</button>
+                        </div>
+                    </section>
+                    <section class="time-tool-card time-calendar-card">
+                        <div class="calendar-heading">
+                            <button class="calendar-nav calendar-previous" type="button" aria-label="Previous month"><i class="bi bi-chevron-left"></i></button>
+                            <strong class="calendar-month"></strong>
+                            <button class="calendar-nav calendar-next" type="button" aria-label="Next month"><i class="bi bi-chevron-right"></i></button>
+                        </div>
+                        <div class="calendar-weekdays"></div>
+                        <div class="calendar-grid"></div>
+                    </section>
+                </div>
+            </section>
+        </div>
+        <div id="bottom-bar" class="widget bottom-bar">
+            <div class="music-player" aria-label="Music player">
+                <a class="music-link" href="https://open.spotify.com/" target="_blank" rel="noreferrer" aria-label="Open music service">
+                    <i class="bi bi-spotify music-service-icon"></i>
+                </a>
+            </div>
+            <div class="bottom-bar-apps" id="bottom-bar-apps"></div>
+            <button class="settings-trigger" type="button" aria-label="Open settings"><i class="bi bi-gear-fill"></i></button>
+        </div>
+        <div id="settings-modal" class="settings-modal" aria-hidden="true">
+            <div class="settings-backdrop"></div>
+            <section class="settings-panel" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+                <button class="settings-close" type="button" aria-label="Close settings"><i class="bi bi-x-lg"></i></button>
+                <p class="settings-kicker">Personalize your space</p>
+                <h2 id="settings-title">Settings</h2>
+                <div class="settings-section">
+                    <h3>Appearance</h3>
+                    <label>Text rendering
+                        <select data-setting="textMode">
+                            <option value="color">Text color</option>
+                            <option value="difference">Difference</option>
+                        </select>
+                    </label>
+                    <label>Text color <input type="color" data-setting="textColor"></label>
+                    <label>Glass color <input type="color" data-setting="glassColor" value="#ffffff" title="Choose the glass tint. Opacity stays at 0.15."></label>
+                    <label>Glass blur <input type="range" min="0" max="32" step="1" data-setting="blur"><output data-output="blur"></output></label>
+                    <label>UI scale <input type="range" min="0.8" max="1.3" step="0.05" data-setting="uiScale"><output data-output="uiScale"></output></label>
+                </div>
+                <div class="settings-section">
+                    <h3>Backgrounds</h3>
+                    <div class="background-library" data-background-library></div>
+                    <label class="background-upload">Add image or video
+                        <input type="file" accept="image/*,video/*" data-background-upload>
+                    </label>
+                </div>
+                <div class="settings-section">
+                    <div class="settings-section-heading"><h3>Apps boxes</h3><button class="add-apps-box" type="button"><i class="bi bi-plus-lg"></i> Add box</button></div>
+                    <div class="apps-box-settings-list"></div>
+                </div>
+                <div class="settings-section">
+                    <h3>Bottom bar</h3>
+                    <label>Layout
+                        <select data-setting="barOrientation">
+                            <option value="horizontal">Horizontal</option>
+                            <option value="vertical">Vertical</option>
+                        </select>
+                    </label>
+                    <label>Position
+                        <select data-setting="barPosition">
+                            <option value="bottom">Bottom</option>
+                            <option value="top">Top</option>
+                            <option value="left">Left</option>
+                            <option value="right">Right</option>
+                        </select>
+                    </label>
+                    <label>Icon pop direction
+                        <select data-setting="barPopDirection">
+                            <option value="auto">Auto (away from edge)</option>
+                            <option value="up">Up</option>
+                            <option value="down">Down</option>
+                            <option value="left">Left</option>
+                            <option value="right">Right</option>
+                        </select>
+                    </label>
+                    <h3>Bottom bar apps</h3>
+                    <div class="app-picker" data-picker="bottomBar"></div>
+                </div>
+                <div class="settings-section">
+                    <h3>App names and icons</h3>
+                    <div class="app-metadata-list"></div>
+                    <form class="custom-app-form">
+                        <label>Name <input type="text" name="name" required placeholder="My app"></label>
+                        <label>Route URL <input type="url" name="url" required placeholder="https://example.com"></label>
+                        <label>Icon URL <input type="url" name="icon" required placeholder="https://example.com/icon.png"></label>
+                        <button type="submit">Add app</button>
+                    </form>
+                </div>
+                <div class="settings-section music-settings">
+                    <h3>Music player</h3>
+                    <label>Service <select data-setting="musicService"><option value="spotify">Spotify</option><option value="youtube">YouTube</option></select></label>
+                </div>
+                <button class="settings-reset" type="button">Reset settings</button>
+            </section>
+        </div>
+        <script src="script.js"></script>
+    </body>
+</html>
