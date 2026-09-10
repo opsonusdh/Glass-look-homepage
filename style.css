@@ -17,8 +17,6 @@ body.weather-modal-active {
     --ui-text-color: azure;
     --ui-blend-mode: normal;
     --ui-accent: var(--ui-text-color);
-    --settings-icon-color: #c27a00;
-    --settings-hover-color: #ffd166;
 }
 
 .bg {
@@ -85,6 +83,7 @@ body.weather-modal-active {
     justify-content: center;
     transform: scale(var(--ui-scale));
     transform-origin: bottom center;
+    anchor-name: --bottom-bar;
 }
 
 .bottom-bar.position-top {
@@ -136,18 +135,20 @@ body.weather-modal-active {
     gap: 0.75rem;
 }
 
-.bottom-bar.is-vertical .music-player {
+.bottom-bar.is-vertical .bar-left {
     padding-right: 0;
     padding-bottom: 0.65rem;
     border-right: 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+    flex-direction: column;
 }
 
-.bottom-bar.is-vertical .settings-trigger {
+.bottom-bar.is-vertical .bar-right {
     padding-top: 0.65rem;
     padding-left: 0;
     border-top: 1px solid rgba(255, 255, 255, 0.25);
     border-left: 0;
+    flex-direction: column;
 }
 
 .bottom-bar:hover {
@@ -800,9 +801,11 @@ html.is-difference-mode .difference-overlay * {
 }
 
 .weather-condition-name {
-    flex-grow: 1;
+    flex: 1;
+    min-width: 0;
     overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: nowrap;
+    position: relative;
 }
 
 .bottom-bar-apps {
@@ -816,12 +819,14 @@ html.is-difference-mode .difference-overlay * {
     display: flex;
 }
 
-.bottom-bar .music-player {
+.bottom-bar .bar-left {
+    anchor-name: --search-trigger;
     display: flex;
     align-items: center;
     gap: 0.5rem;
     padding-right: 0.8rem;
     border-right: 1px solid rgba(255, 255, 255, 0.25);
+    flex-direction: row;
 }
 
 .music-link,
@@ -830,6 +835,7 @@ html.is-difference-mode .difference-overlay * {
     color: var(--ui-text-color);
     background: transparent;
     cursor: pointer;
+    transition: all 0.2s ease;
 }
 
 .music-link {
@@ -845,14 +851,232 @@ html.is-difference-mode .difference-overlay * {
 
 .music-service-icon {
     color: #8be28b;
-    font-size: 1.15rem;
+    font-size: 1.2rem;
 }
 
 .settings-trigger {
-    padding-left: 0.8rem;
+    color: var(--ui-accent);
+    font-size: 1.2rem;
+}
+
+.search-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 29;
+    background: rgba(8, 12, 24, 0.28);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.search-backdrop.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.search-modal {
+    position: fixed;
+    z-index: 30;
+    min-width: 4rem;
+    min-height: 3rem;
+    padding: 1rem;
+    width: 30rem;
+    max-width: min(30rem, calc(100vw - 2rem));
+    position-anchor: --search-trigger;
+    position-area: top;
+    margin-bottom: 0.75rem;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(1rem) scale(0.82);
+    transform-origin: 50% 100%;
+    transition:
+        opacity 0.25s ease,
+        visibility 0.25s ease,
+        transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.search-modal.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+}
+
+.google-suggestions {
+    margin-top: 10px;
+    padding: 0.45rem 0.65rem;
+    border-radius: 12px;
+    color: rgba(255, 255, 255, 0.42);
+    height: 10rem;
+    overflow-y: auto;
+}
+
+.google-suggestions:not(.has-results) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 0.8rem;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+}
+
+.google-suggestions .search-suggestion {
+    position: relative;
+    padding: 5px;
+    margin-top: 5px;
+}
+
+#google-search-form {
+    position: relative;
+    display: flex;
+    flex: 0;
+    align-items: center;
+    width: 80%;
+    align-self: center;
+    min-width: 10rem;
+    max-width: 20rem;
+}
+
+.search-panel {
+    display: flex;
+    flex-direction: column;
+}
+
+#google-search-form input {
+    flex: 1;
+    width: 100%;
+    border-radius: 20px;
+    background: rgba(var(--glass-rgb), var(--glass-alpha));
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+    overflow: hidden;
+    color: var(--ui-text-color);
+    padding: 5px;
+    padding-right: 4.5rem;
+    padding-left: 0.5rem;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease, width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), height 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), scale 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+#google-search-form input:focus {
+    border: none;
+    outline: none;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 1px 1px 1px rgba(255, 255, 255, 0.6);
+}
+
+#google-search-form .search-submit,
+#google-search-form .search-close {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1.8rem;
+    height: 1.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    color: var(--ui-text-color);
+    background: transparent;
+    cursor: pointer;
+}
+
+#google-search-form .search-submit {
+    right: 0.45rem;
+    transition: all 0.2s ease;
+}
+
+#google-search-form .search-close {
+    right: 2.25rem;
+    display: none;
+    transition: all 0.2s ease;
+}
+
+#google-search-form .search-submit:hover,
+#google-search-form .search-close:hover {
+    color: var(--ui-accent);
+    filter: drop-shadow(0 0 8px var(--ui-accent));
+}
+
+.google-search:hover {
+    color: var(--ui-accent);
+    filter: drop-shadow(0 0 8px var(--ui-accent));
+}
+
+.search-suggestion {
+    position: relative;
+    padding: 5px;
+    margin-top: 5px;
+
+}
+
+#google-search-form {
+    display: flex;
+    flex: 0;
+    gap: 15px;
+    align-items: center;
+    width: 80%;
+    align-self: center;
+    min-width: 10rem;
+    max-width: 20rem;
+}
+
+.search-panel .search-panel-wrapper {
+    max-width: 10rem;
+}
+
+.search-panel {
+    display: flex;
+    flex-direction: column;
+}
+
+#google-search-form input {
+    flex: 1;
+    border-radius: 20px;
+    background: rgba(var(--glass-rgb), var(--glass-alpha));
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+    overflow: hidden;
+    color: var(--ui-text-color);
+    padding: 5px;
+    padding-right: 2rem;
+    padding-left: 0.5rem;
+    anchor-name: --google-input;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease, width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), height 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), scale 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+#google-search-form input:focus {
+    border: none;
+    outline: none;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 1px 1px 1px rgba(255, 255, 255, 0.6);
+}
+
+.search-suggestion {
+    width: 100%;
+    display: flex;
+    flex: 0;
+    cursor: pointer;
+}
+
+.search-suggestion span{
+    flex: 1;
+    overflow: hidden;
+}
+
+.bar-right {
+    display: flex;
     border-left: 1px solid rgba(255, 255, 255, 0.25);
-    color: var(--settings-icon-color);
-    font-size: 1rem;
+    flex-direction: row;
+    padding-left: 0.8rem;
+    gap: 15px;
+}
+.bar-right * {
+    display: inline;
 }
 
 .music-link:hover {
@@ -861,8 +1085,8 @@ html.is-difference-mode .difference-overlay * {
 }
 
 .settings-trigger:hover {
-    color: var(--settings-hover-color);
-    filter: drop-shadow(0 0 8px var(--settings-hover-color));
+    color: var(--ui-accent);
+    filter: drop-shadow(0 0 8px var(--ui-accent));
 }
 
 .apps-box.is-hidden {

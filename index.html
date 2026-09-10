@@ -111,15 +111,52 @@
                 </div>
             </section>
         </div>
-        <div id="bottom-bar" class="widget bottom-bar">
-            <div class="music-player" aria-label="Music player">
-                <a class="music-link" href="https://open.spotify.com/" target="_blank" rel="noreferrer" aria-label="Open music service">
-                    <i class="bi bi-spotify music-service-icon"></i>
-                </a>
-            </div>
-            <div class="bottom-bar-apps" id="bottom-bar-apps"></div>
-            <button class="settings-trigger" type="button" aria-label="Open settings"><i class="bi bi-gear-fill"></i></button>
+        <div class="search-backdrop" id="search-backdrop" aria-hidden="true"></div>
+        <div class="search-modal widget" id="search-modal" aria-hidden="true">
+            <section class="search-panel" role="search" aria-label="Search">
+                <form class="search-form" id="google-search-form" action="https://www.google.com/search" method="get" target="_blank">
+                    <input
+                        id="google-search-input"
+                        name="q"
+                        type="search"
+                        placeholder="Search..."
+                        autocapitalize="off"
+                        spellcheck="false"
+                        aria-label="Search Google"
+                        aria-controls="google-suggestions"
+                        aria-autocomplete="list"
+                    >
+                    <button type="submit" class="search-submit" aria-label="Search Google" id="search-submit">
+                        <i class="bi bi-search" aria-hidden="true"></i>
+                    </button>
+                    <button type="button" class="search-close" aria-label="Close search" id="search-close">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </form>
+                
+                <div id="google-suggestions" class="google-suggestions" role="listbox" aria-label="Google search suggestions">
+                    Type to search the web
+                </div>
+            </section>
         </div>
+        <div id="bottom-bar" class="widget bottom-bar">
+            <div class="bar-left">
+                <span class="google-search">
+                    <i class="bi bi-search"></i>
+                </span>
+            </div>
+
+            <div class="bottom-bar-apps" id="bottom-bar-apps"></div>
+            <div class="bar-right">
+                <div class="music-player" aria-label="Music player">
+                    <a class="music-link" href="https://open.spotify.com/" target="_blank" rel="noreferrer" aria-label="Open music service">
+                        <i class="bi bi-spotify music-service-icon"></i>
+                    </a>
+                </div>
+                <button class="settings-trigger" type="button" aria-label="Open settings"><i class="bi bi-gear-fill"></i></button>
+            </div>
+        </div>
+        
         <div id="settings-modal" class="settings-modal" aria-hidden="true">
             <div class="settings-backdrop"></div>
             <section class="settings-panel" role="dialog" aria-modal="true" aria-labelledby="settings-title">

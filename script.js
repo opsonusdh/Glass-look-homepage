@@ -1,5 +1,10 @@
 let is24HourFormat = true;
 let currentSettings;
+let debounceTimer = null;
+let requestId = 0;
+let jsonpId = 0;
+let activeSuggestions = [];
+let selectedIndex = -1;
 
 // just copied from google
 function updateClock(clockElement, use24HourFormat) {
@@ -1139,8 +1144,258 @@ async function initWeather() {
   }
 }
 
+
+function openSearch() {
+  const searchWidget = document.getElementById("search-modal");
+  const searchBackdrop = document.getElementById("search-backdrop");
+  const searchInput = document.getElementById("google-search-input");
+
+  searchBackdrop.classList.add("is-open");
+  searchBackdrop.setAttribute("aria-hidden", "false");
+
+  searchWidget.classList.add("is-open");
+  searchWidget.setAttribute("aria-hidden", "false");
+
+  requestAnimationFrame(() => {
+    searchInput.focus();
+    searchInput.select();
+  });
+}
+
+function closeSearch() {
+  const searchWidget = document.getElementById("search-modal");
+  const searchBackdrop = document.getElementById("search-backdrop");
+  const searchInput = document.getElementById("google-search-input");
+  const suggestionsBox = document.getElementById("google-suggestions");
+  const searchClose = document.getElementById("search-close");
+
+  searchWidget.classList.remove("is-open");
+  searchWidget.setAttribute("aria-hidden", "true");
+
+  searchBackdrop.classList.remove("is-open");
+  searchBackdrop.setAttribute("aria-hidden", "true");
+
+  searchClose.style.display = "none";
+
+  suggestionsBox.classList.remove("has-results");
+  suggestionsBox.innerHTML = "Type to search the web";
+
+  activeSuggestions = [];
+  selectedIndex = -1;
+  searchInput.value = "";
+}
+
+
+function renderSuggestions(suggestions) {
+  const searchInput = document.getElementById("google-search-input");
+  const suggestionsBox = document.getElementById("google-suggestions");
+
+  activeSuggestions = suggestions;
+  selectedIndex = -1;
+  suggestionsBox.innerHTML = "";
+
+  if (!suggestions.length) {
+    suggestionsBox.classList.remove("has-results");
+    return;
+  }
+
+  suggestionsBox.classList.add("has-results");
+
+  suggestions.forEach((suggestion, index) => {
+    const item = document.createElement("button");
+    item.type = "button";
+    item.className = "search-suggestion widget three-d";
+    item.setAttribute("role", "option");
+    item.dataset.index = String(index);
+    item.innerHTML = `<i class="bi bi-search" aria-hidden="true"></i><span></span>`;
+    item.querySelector("span").textContent = suggestion;
+
+    item.addEventListener("mouseenter", () => setSelected(index));
+    item.addEventListener("mousedown", (event) => {
+        event.preventDefault();
+        searchInput.value = suggestion;
+        submitSearch();
+    });
+
+    suggestionsBox.appendChild(item);
+  });
+}
+
+function setSelected(index) {
+  const searchInput = document.getElementById("google-search-input");
+  const suggestionsBox = document.getElementById("google-suggestions");
+  const items = suggestionsBox.querySelectorAll(".search-suggestion");
+
+  items.forEach(item => item.classList.remove("is-selected"));
+
+  selectedIndex = index;
+  if (selectedIndex >= 0 && selectedIndex < items.length) {
+    const item = items[selectedIndex];
+    item.classList.add("is-selected");
+    item.scrollIntoView({ block: "nearest" });
+    searchInput.setAttribute("aria-activedescendant", `google-suggestion-${selectedIndex}`);
+    item.id = `google-suggestion-${selectedIndex}`;
+  } else {
+    searchInput.removeAttribute("aria-activedescendant");
+  }
+}
+
+function submitSearch() {
+  const searchInput = document.getElementById("google-search-input");
+  const searchForm = document.getElementById("google-search-form");
+  const query = searchInput.value.trim();
+  if (!query) return;
+  searchForm.submit();
+}
+
+function fetchGoogleSuggestions(query) {
+  return new Promise((resolve, reject) => {
+    const callbackName = `__googleSuggest_${Date.now()}_${jsonpId++}`;
+    const script = document.createElement("script");
+    let finished = false;
+
+    const cleanup = () => {
+      if (finished) return;
+        finished = true;
+        clearTimeout(timeout);
+        delete window[callbackName];
+        script.remove();
+    };
+      const timeout = setTimeout(() => {
+        cleanup();
+        reject(new Error("Google suggestions timed out"));
+    }, 5000);
+
+    window[callbackName] = (data) => {
+        cleanup();
+        const suggestions = Array.isArray(data) && Array.isArray(data[1])
+          ? data[1].filter(value => typeof value === "string")
+          : [];
+        resolve(suggestions);
+    };
+
+    script.onerror = () => {
+      cleanup();
+      reject(new Error("Could not load Google suggestions"));
+    };
+
+    const params = new URLSearchParams({
+        client: "chrome",
+        hl: "en",
+        gl: "in",
+        q: query,
+        callback: callbackName
+    });
+
+    script.src = `https://suggestqueries.google.com/complete/search?${params.toString()}`;
+    document.head.appendChild(script);
+  });
+}
+
+async function updateSuggestions() {
+  const searchInput = document.getElementById("google-search-input");
+  const query = searchInput.value.trim();
+  const currentRequest = ++requestId;
+
+  if (!query) {
+    renderSuggestions([]);
+    return;
+  }
+
+  try {
+    const suggestions = await fetchGoogleSuggestions(query);
+    if (currentRequest !== requestId) return;
+
+    renderSuggestions(
+      [...new Set(suggestions)]
+        .filter(suggestion => suggestion.toLowerCase() !== query.toLowerCase())
+        .slice(0, 10)
+    );
+  } catch (error) {
+    if (currentRequest === requestId) {
+      console.warn("Google autocomplete unavailable:", error);
+      renderSuggestions([]);
+    }
+  }
+}
+
+
 window.onload = () => {
   const clockElement = document.querySelector('.widget.clock');
+  const searchInput = document.getElementById("google-search-input");
+  const searchForm = document.getElementById("google-search-form");
+  const suggestionsBox = document.getElementById("google-suggestions");
+  const searchClose = document.querySelector(".search-close");
+  const searchTrigger = document.querySelector(".bar-left");
+  const searchBottomBar = document.querySelector(".google-search");
+  const searchBackdrop = document.getElementById("search-backdrop");
+
+  searchTrigger?.addEventListener("click", openSearch);
+  searchClose?.addEventListener("click", closeSearch);
+
+  searchInput.addEventListener("input", () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(updateSuggestions, 180);
+
+      if (searchInput.value === "") {
+          document.getElementById("search-close").style.display = "none";
+          document.getElementById("google-search-input").classList.remove("has-value");
+      } else {
+        document.getElementById("search-close").style.display = "inline";
+        document.getElementById("google-search-input").classList.add("has-value");
+      }
+  });
+
+  searchInput.addEventListener("keydown", (event) => {
+      const count = activeSuggestions.length;
+
+      if (event.key === "ArrowDown" && count) {
+          event.preventDefault();
+          setSelected((selectedIndex + 1) % count);
+          return;
+      }
+
+      if (event.key === "ArrowUp" && count) {
+          event.preventDefault();
+          setSelected((selectedIndex - 1 + count) % count);
+          return;
+      }
+
+      if (event.key === "Escape") {
+          event.preventDefault();
+          closeSearch();
+          return;
+      }
+
+      if (event.key === "Enter" && selectedIndex >= 0 && activeSuggestions[selectedIndex]) {
+          event.preventDefault();
+          searchInput.value = activeSuggestions[selectedIndex];
+          submitSearch();
+      }
+  });
+
+  searchForm.addEventListener("submit", (event) => {
+      const query = searchInput.value.trim();
+      if (!query) event.preventDefault();
+  });
+
+  document.addEventListener("keydown", (event) => {
+      if (event.key === "/" && document.activeElement !== searchInput && !event.ctrlKey && !event.metaKey && !event.altKey) {
+          const tag = document.activeElement?.tagName;
+          if (!["INPUT", "TEXTAREA", "SELECT"].includes(tag)) {
+              event.preventDefault();
+              openSearch();
+          }
+      }
+  });
+
+  searchBottomBar.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    openSearch();
+  });
+
+  searchBackdrop?.addEventListener("click", closeSearch);
 
   updateClock(clockElement, is24HourFormat);
   switchToImageIfVideoUnsupported();
