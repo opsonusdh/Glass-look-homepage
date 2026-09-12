@@ -729,11 +729,15 @@ function updateMusicPlayer(settings) {
 const backgroundCatalog = [
   { file: 'image.png', label: 'Image background', type: 'image' },
   { file: 'video.mp4', label: 'Video background', type: 'video' },
-  {
-    file: 'cyan-and-pink-abstract-luminverse-background-vj-loop-in-4k-video.mp4',
-    label: 'Cyan and pink abstract video',
-    type: 'video'
-  }
+  { file: 'video2.mp4', label: 'Video background', type: 'video'},
+  { file: 'image2.jpeg', label: 'Image background', type: 'image' },
+  { file: 'video3.mp4', label: 'Video background', type: 'video' },
+  { file: 'image3.jpeg', label: 'Image background', type: 'image' },
+  { file: 'image4.jpeg', label: 'Image background', type: 'image' },
+  { file: 'image5.jpeg', label: 'Image background', type: 'image' },
+  { file: 'image6.jpeg', label: 'Image background', type: 'image' },
+  { file: 'image7.jpeg', label: 'Image background', type: 'image' },
+  { file: 'image8.jpeg', label: 'Image background', type: 'image' },
 ];
 
 function getBackgroundCatalog(settings) {

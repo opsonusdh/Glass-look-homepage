@@ -1035,26 +1035,6 @@ html.is-difference-mode .difference-overlay * {
     flex-direction: column;
 }
 
-#google-search-form input {
-    flex: 1;
-    border-radius: 20px;
-    background: rgba(var(--glass-rgb), var(--glass-alpha));
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    backdrop-filter: blur(var(--glass-blur)) saturate(180%);
-    overflow: hidden;
-    color: var(--ui-text-color);
-    padding: 5px;
-    padding-right: 2rem;
-    padding-left: 0.5rem;
-    anchor-name: --google-input;
-    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease, width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), height 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), scale 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-#google-search-form input:focus {
-    border: none;
-    outline: none;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 1px 1px 1px rgba(255, 255, 255, 0.6);
-}
 
 .search-suggestion {
     width: 100%;
